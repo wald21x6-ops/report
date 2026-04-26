@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rana Agency — Quraniyah Academy · Project Delivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #07070a;
+    --bg-soft: #0f0f14;
+    --bg-card: #131319;
+    --bg-card-hover: #1a1a22;
+    --line: #1f1f28;
+    --line-soft: #15151c;
+    --text: #f4f3ef;
+    --text-dim: #9a9aa3;
+    --text-faint: #5b5b66;
+    --gold: #c9a961;
+    --gold-bright: #e7c97b;
+    --gold-soft: rgba(201, 169, 97, 0.12);
+    --accent-design: #b9a4ff;
+    --accent-dev: #7fb8ff;
+    --accent-content: #9cd99c;
+    --accent-biz: #ffc97a;
+    --accent-infra: #7fe0c8;
+    --modal-bg: rgba(7, 7, 10, 0.85);
+  }
+  html, body { background: var(--bg); color: var(--text); }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Cinematic ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 1200px; height: 800px;
+    background: radial-gradient(ellipse at center, rgba(201, 169, 97, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -300px; right: -200px;
+    width: 800px; height: 800px;
+    background: radial-gradient(ellipse at center, rgba(127, 184, 255, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  main, header, footer { position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 0 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    position: sticky;
+    top: 0;
+    background: rgba(7, 7, 10, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-style: italic;
+  }
+  .logo span { color: var(--text-faint); font-weight: 400; font-style: italic; font-size: 16px; }
+  .header-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-meta::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+  }
+  .print-btn {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.25s;
+    margin-left: 16px;
+  }
+  .print-btn:hover {
+    background: var(--gold);
+    color: var(--bg);
+    box-shadow: 0 0 24px rgba(201, 169, 97, 0.4);
+  }
+  .header-right { display: flex; align-items: center; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 120px 5vw 100px;
+    max-width: 1400px;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 8vw, 110px);
+    font-weight: 700;
+    letter-spacing: -2.5px;
+    line-height: 1.0;
+    color: var(--text);
+    margin-bottom: 36px;
+    max-width: 1100px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold);
+    background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-desc {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 640px;
+    line-height: 1.75;
+    margin-bottom: 56px;
+    font-weight: 300;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 32px;
+    max-width: 900px;
+    border-top: 1px solid var(--line);
+    padding-top: 40px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -2px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-num.gold {
+    color: var(--gold);
+    background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 500;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    padding: 32px 5vw;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+  .filter-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-faint);
+    margin-right: 8px;
+    font-weight: 500;
+  }
+  .filter-btn {
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .filter-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .filter-btn.active {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+    box-shadow: 0 0 24px rgba(201, 169, 97, 0.3);
+  }
+
+  /* ── SERVICES ── */
+  .services-section {
+    padding: 0 5vw 120px;
+  }
+  .section-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    margin-bottom: 24px;
+    padding-top: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-heading::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .section-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .service-card {
+    background: var(--bg-card);
+    padding: 28px 28px 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    min-height: 220px;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .service-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--gold-soft);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 169, 97, 0.15);
+  }
+  .service-card:hover::before { opacity: 1; }
+  .service-card:hover .card-arrow {
+    opacity: 1;
+    transform: translate(4px, -4px);
+    color: var(--gold);
+  }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--text-faint);
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+  .card-arrow {
+    font-size: 18px;
+    color: var(--text-faint);
+    opacity: 0.4;
+    transition: all 0.3s;
+  }
+  .card-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--line);
+  }
+  .card-tag.t-design { color: var(--accent-design); border-color: rgba(185, 164, 255, 0.25); }
+  .card-tag.t-dev { color: var(--accent-dev); border-color: rgba(127, 184, 255, 0.25); }
+  .card-tag.t-content { color: var(--accent-content); border-color: rgba(156, 217, 156, 0.25); }
+  .card-tag.t-biz { color: var(--accent-biz); border-color: rgba(255, 201, 122, 0.25); }
+  .card-tag.t-infra { color: var(--accent-infra); border-color: rgba(127, 224, 200, 0.25); }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+  }
+  .card-blurb {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+  .card-price {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .price-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--gold);
+  }
+  .price-range {
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── TOTAL BAR ── */
+  .total-row {
+    margin: 80px 0 0;
+    border: 1px solid var(--gold);
+    border-radius: 18px;
+    padding: 56px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.08) 0%, transparent 60%);
+    position: relative;
+    overflow: hidden;
+  }
+  .total-row::before {
+    content: '';
+    position: absolute;
+    top: 0; right: -50%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201, 169, 97, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .total-left { position: relative; }
+  .total-left .label {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .total-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  .total-left p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    font-weight: 300;
+    max-width: 420px;
+  }
+  .total-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    position: relative;
+  }
+  .total-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 80px;
+    font-weight: 800;
+    letter-spacing: -4px;
+    color: var(--gold);
+    background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .total-note {
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--modal-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    max-width: 620px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(201, 169, 97, 0.1);
+    animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-header {
+    padding: 36px 36px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+  }
+  .modal-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 36px;
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .modal-header-left { display: flex; flex-direction: column; gap: 14px; }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    line-height: 1.15;
+    color: var(--text);
+  }
+  .modal-close {
+    background: transparent;
+    border: 1px solid var(--line);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .modal-close:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .modal-body { padding: 32px 36px 36px; }
+  .modal-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .modal-body p {
+    font-size: 14.5px;
+    color: var(--text-dim);
+    line-height: 1.75;
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+  .deliverables {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .deliverables li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.55;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line-soft);
+    font-weight: 400;
+  }
+  .deliverables li:last-child { border-bottom: none; padding-bottom: 0; }
+  .deliverables li::before {
+    content: '◆';
+    font-size: 8px;
+    color: var(--gold);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .modal-price-row {
+    border-top: 1px solid var(--line);
+    padding-top: 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .modal-price-label {
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .modal-price-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    color: var(--gold);
+  }
+  .modal-range-val { font-size: 12px; color: var(--text-faint); letter-spacing: 0.05em; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 48px 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: var(--bg-soft);
+  }
+  footer p { font-size: 12px; color: var(--text-faint); letter-spacing: 0.05em; }
+  footer .brand { font-family: 'Playfair Display', serif; color: var(--text-dim); font-style: italic; }
+
+  /* hidden for filter */
+  .service-card.hidden { display: none; }
+
+  /* fade-in animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 700px) {
+    .hero { padding: 80px 5vw 60px; }
+    .hero h1 { font-size: 44px; letter-spacing: -1.5px; }
+    .total-row { flex-direction: column; align-items: flex-start; padding: 36px 28px; }
+    .total-amount { font-size: 56px; letter-spacing: -2px; }
+    .total-right { align-items: flex-start; }
+    .total-left h2 { font-size: 26px; }
+    .modal-header, .modal-body { padding-left: 24px; padding-right: 24px; }
+    .modal-title { font-size: 22px; }
+    .modal-price-val { font-size: 32px; }
+    .stat-num { font-size: 36px; }
+    .header-meta { display: none; }
+    .print-btn { padding: 7px 14px; font-size: 10px; }
+    .services-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    body { background: white; color: black; }
+    body::before, body::after { display: none; }
+    header, footer, .filter-bar, .print-btn { display: none !important; }
+    .hero { padding: 30px 0; }
+    .hero h1 { font-size: 36px; color: black; }
+    .hero h1 em { color: #8a6f2c; -webkit-text-fill-color: #8a6f2c; }
+    .hero-desc, .stat-num, .stat-label, .card-title, .card-blurb,
+    .price-range, .total-left h2, .total-left p, .total-note,
+    .section-heading { color: black !important; -webkit-text-fill-color: black !important; }
+    .hero-eyebrow, .price-main, .total-amount {
+      color: #8a6f2c !important;
+      -webkit-text-fill-color: #8a6f2c !important;
+    }
+    .service-card {
+      background: white !important;
+      border: 1px solid #ccc !important;
+      page-break-inside: avoid;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    .total-row {
+      background: white !important;
+      border-color: #8a6f2c !important;
+      page-break-inside: avoid;
+    }
+    .total-row::before { display: none; }
+    .services-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .services-section { padding: 0; }
+    .section-heading { page-break-after: avoid; }
+    .stat-num.gold { -webkit-text-fill-color: #8a6f2c !important; color: #8a6f2c !important; }
+  }
+</style>
+</head>
+<body>
+<!-- HEADER -->
+<header>
+  <a class="logo" href="#">
+    <span class="logo-mark">R</span>
+    Rana Agency
+    <span>/ project delivery</span>
+  </a>
+  <div class="header-right">
+    <span class="header-meta">Quraniyah Academy</span>
+    <button class="print-btn" onclick="window.print()">Download PDF</button>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Full-Stack Project Delivery · 2026</p>
+  <h1>Built from <em>zero.</em><br>Delivered <em>in full.</em></h1>
+  <p class="hero-desc">
+    Every service below was conceptualised, designed, engineered, and shipped by Rana Agency —
+    from the first line of code to a fully live, payment-enabled web platform. Click any service
+    to see exactly what was delivered.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">15</span>
+      <span class="stat-label">Services Delivered</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num gold">$13,500</span>
+      <span class="stat-label">Total Project Value</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">1</span>
+      <span class="stat-label">Person · Zero Shortcuts</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Built From Scratch</span>
+    </div>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Filter by category</span>
+  <button class="filter-btn active" onclick="filter('all', this)">All Services</button>
+  <button class="filter-btn" onclick="filter('design', this)">Design</button>
+  <button class="filter-btn" onclick="filter('development', this)">Development</button>
+  <button class="filter-btn" onclick="filter('content', this)">Content</button>
+  <button class="filter-btn" onclick="filter('business', this)">Business</button>
+  <button class="filter-btn" onclick="filter('infrastructure', this)">Infrastructure</button>
+</div>
+
+<!-- SERVICES -->
+<div class="services-section">
+  <p class="section-heading">Design</p>
+  <div class="services-grid">
+    <div class="service-card fade-in" data-cat="design" onclick="openModal('design-uiux')">
+      <div class="card-top"><span class="card-num">01</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-design">Design</span>
+      <div class="card-title">UI / UX Design — Full Website</div>
+      <div class="card-blurb">End-to-end visual design from scratch: layout, color system, typography, components, and responsive breakpoints.</div>
+      <div class="card-price"><span class="price-main">$1,500</span><span class="price-range">Range $800 – $3,000</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="design" onclick="openModal('design-images')">
+      <div class="card-top"><span class="card-num">02</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-design">Design</span>
+      <div class="card-title">Custom Image Creation & Visual Assets</div>
+      <div class="card-blurb">Original images, hero visuals, section illustrations, and graphic elements made specifically for the brand.</div>
+      <div class="card-price"><span class="price-main">$400</span><span class="price-range">Range $200 – $800</span></div>
+    </div>
+  </div>
+
+  <p class="section-heading">Development</p>
+  <div class="services-grid">
+    <div class="service-card fade-in" data-cat="development" onclick="openModal('dev-frontend')">
+      <div class="card-top"><span class="card-num">03</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-dev">Development</span>
+      <div class="card-title">Full Website Build (Frontend)</div>
+      <div class="card-blurb">Coding the entire site from scratch — HTML/CSS/JS, responsive layout, animations, cross-browser tested.</div>
+      <div class="card-price"><span class="price-main">$2,500</span><span class="price-range">Range $1,500 – $5,000</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="development" onclick="openModal('dev-auth')">
+      <div class="card-top"><span class="card-num">04</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-dev">Development</span>
+      <div class="card-title">Google OAuth / Login Integration</div>
+      <div class="card-blurb">Google login with Firebase Auth, token handling, session management, and protected routes.</div>
+      <div class="card-price"><span class="price-main">$600</span><span class="price-range">Range $300 – $1,000</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="development" onclick="openModal('dev-stripe')">
+      <div class="card-top"><span class="card-num">05</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-dev">Development</span>
+      <div class="card-title">Stripe Payment Gateway Integration</div>
+      <div class="card-blurb">Full Stripe setup: checkout flow, subscription billing, webhooks, payment confirmation, and error states.</div>
+      <div class="card-price"><span class="price-main">$1,200</span><span class="price-range">Range $700 – $2,500</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="development" onclick="openModal('dev-plans')">
+      <div class="card-top"><span class="card-num">06</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-dev">Development</span>
+      <div class="card-title">Subscription Plan Architecture</div>
+      <div class="card-blurb">Designing plan tiers, naming, feature gating, plan content logic, and upgrade/downgrade handling.</div>
+      <div class="card-price"><span class="price-main">$700</span><span class="price-range">Range $400 – $1,200</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="development" onclick="openModal('dev-admin')">
+      <div class="card-top"><span class="card-num">07</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-dev">Development</span>
+      <div class="card-title">Admin Panel — Subscription Management</div>
+      <div class="card-blurb">Custom dashboard to view, search, and manage active subscribers, statuses, and account details.</div>
+      <div class="card-price"><span class="price-main">$1,500</span><span class="price-range">Range $800 – $3,000</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="development" onclick="openModal('dev-firebase')">
+      <div class="card-top"><span class="card-num">08</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-dev">Development</span>
+      <div class="card-title">Firebase Backend & Database Integration</div>
+      <div class="card-blurb">Firestore schema design, security rules, real-time data, and full environment configuration.</div>
+      <div class="card-price"><span class="price-main">$1,000</span><span class="price-range">Range $600 – $2,000</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="development" onclick="openModal('dev-email')">
+      <div class="card-top"><span class="card-num">09</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-dev">Development</span>
+      <div class="card-title">Email Automation System</div>
+      <div class="card-blurb">Triggered emails for signup, payment, and reminders — with template design and delivery pipeline setup.</div>
+      <div class="card-price"><span class="price-main">$800</span><span class="price-range">Range $400 – $1,500</span></div>
+    </div>
+  </div>
+
+  <p class="section-heading">Content</p>
+  <div class="services-grid">
+    <div class="service-card fade-in" data-cat="content" onclick="openModal('content-copy')">
+      <div class="card-top"><span class="card-num">10</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-content">Content</span>
+      <div class="card-title">SEO-Optimised Website Copywriting</div>
+      <div class="card-blurb">All page copy written for the business — hero, about, services, FAQs, CTAs — with keywords, meta descriptions, and title tags.</div>
+      <div class="card-price"><span class="price-main">$900</span><span class="price-range">Range $500 – $2,000</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="content" onclick="openModal('content-hooks')">
+      <div class="card-top"><span class="card-num">11</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-content">Content</span>
+      <div class="card-title">Conversion Hooks & Persuasive Copy</div>
+      <div class="card-blurb">Trust signals, urgency hooks, benefit-led headlines, objection handling — written to convert visitors into paying customers.</div>
+      <div class="card-price"><span class="price-main">$500</span><span class="price-range">Range $300 – $1,000</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="content" onclick="openModal('content-seo')">
+      <div class="card-top"><span class="card-num">12</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-content">Content</span>
+      <div class="card-title">On-Page SEO Setup</div>
+      <div class="card-blurb">Semantic HTML structure, heading hierarchy, image alt text, Open Graph tags, and structured markup throughout.</div>
+      <div class="card-price"><span class="price-main">$400</span><span class="price-range">Range $200 – $800</span></div>
+    </div>
+  </div>
+
+  <p class="section-heading">Business & Accounts</p>
+  <div class="services-grid">
+    <div class="service-card fade-in" data-cat="business" onclick="openModal('biz-stripe')">
+      <div class="card-top"><span class="card-num">13</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-biz">Business</span>
+      <div class="card-title">Stripe Account Creation & Configuration</div>
+      <div class="card-blurb">Merchant account creation, KYC verification, tax settings, payout configuration, and Stripe dashboard product setup.</div>
+      <div class="card-price"><span class="price-main">$300</span><span class="price-range">Range $150 – $500</span></div>
+    </div>
+  </div>
+
+  <p class="section-heading">Infrastructure</p>
+  <div class="services-grid">
+    <div class="service-card fade-in" data-cat="infrastructure" onclick="openModal('infra-deploy')">
+      <div class="card-top"><span class="card-num">14</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-infra">Infrastructure</span>
+      <div class="card-title">Firebase Hosting & Deployment Pipeline</div>
+      <div class="card-blurb">Deploying to Firebase Hosting with custom domain, SSL setup, deploy scripts, and environment management.</div>
+      <div class="card-price"><span class="price-main">$400</span><span class="price-range">Range $200 – $700</span></div>
+    </div>
+    <div class="service-card fade-in" data-cat="infrastructure" onclick="openModal('infra-arch')">
+      <div class="card-top"><span class="card-num">15</span><span class="card-arrow">↗</span></div>
+      <span class="card-tag t-infra">Infrastructure</span>
+      <div class="card-title">Project Architecture & Full System Design</div>
+      <div class="card-blurb">Choosing the stack, structuring the codebase, and connecting all services — auth, payments, database, email, hosting — into one working system.</div>
+      <div class="card-price"><span class="price-main">$800</span><span class="price-range">Range $500 – $1,500</span></div>
+    </div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="total-row fade-in">
+    <div class="total-left">
+      <p class="label">Project Summary</p>
+      <h2>Total Project Value</h2>
+      <p>15 services · mid-market freelance rates · all delivered by one person, end-to-end, with no template, no shortcuts, no outsourcing.</p>
+    </div>
+    <div class="total-right">
+      <span class="total-amount">$13,500</span>
+      <span class="total-note">Market range · $7,050 – $27,000</span>
+    </div>
+  </div>
+</div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p class="brand">Rana Agency · est. 2026</p>
+  <p>Quraniyah Academy · Full Project Delivery · Confidential Invoice</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <span id="modal-tag" class="card-tag"></span>
+        <h2 class="modal-title" id="modal-title"></h2>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-section-label">What Was Delivered</p>
+      <p id="modal-desc"></p>
+      <p class="modal-section-label">Deliverables</p>
+      <ul class="deliverables" id="modal-deliverables"></ul>
+      <div class="modal-price-row">
+        <div>
+          <p class="modal-price-label">Charged for this service</p>
+          <p class="modal-price-val" id="modal-price"></p>
+        </div>
+        <p class="modal-range-val" id="modal-range"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const services = {
+  'design-uiux': {
+    tag: 'Design', tagClass: 't-design',
+    title: 'UI / UX Design — Full Website',
+    desc: 'The entire visual identity of the website was designed from scratch with no template or theme used. This covered every screen, state, and component — including color palette selection, typographic hierarchy, spacing system, button styles, form design, mobile layouts, and visual flow between sections.',
+    deliverables: ['Color system & typography scale defined', 'Full responsive layout designed for all pages', 'Component library: buttons, cards, forms, navbars', 'Mobile-first breakpoints across all sections', 'Visual hierarchy guiding users toward conversion', 'Hover, active, and focus states for all interactive elements'],
+    price: '$1,500', range: 'Market range · $800 – $3,000'
+  },
+  'design-images': {
+    tag: 'Design', tagClass: 't-design',
+    title: 'Custom Image Creation & Visual Assets',
+    desc: 'All images and visual assets on the site were created specifically for this project — not sourced from stock libraries. This includes the hero section imagery, section background visuals, and any graphic elements that reinforce the brand\'s identity and credibility.',
+    deliverables: ['Hero section image(s) designed and produced', 'Section-specific graphics and illustrations', 'Brand-consistent visual language throughout', 'Optimised image exports for web performance', 'All assets original — not stock photography'],
+    price: '$400', range: 'Market range · $200 – $800'
+  },
+  'dev-frontend': {
+    tag: 'Development', tagClass: 't-dev',
+    title: 'Full Website Build (Frontend)',
+    desc: 'The entire frontend of the website was written by hand — no page builder, no WordPress, no template. Clean HTML, CSS, and JavaScript with smooth animations, a fully responsive layout, and cross-browser compatibility tested across Chrome, Safari, Firefox, and mobile browsers.',
+    deliverables: ['All pages coded from scratch (HTML/CSS/JS)', 'Responsive across mobile, tablet, and desktop', 'Smooth scroll animations and transitions', 'Cross-browser compatibility verified', 'Semantic HTML structure for accessibility and SEO', 'Performance-optimised asset loading'],
+    price: '$2,500', range: 'Market range · $1,500 – $5,000'
+  },
+  'dev-auth': {
+    tag: 'Development', tagClass: 't-dev',
+    title: 'Google OAuth / Login Integration',
+    desc: 'Full Google login integration using Firebase Authentication. Users can sign in with their Google account in one click, with sessions persisted securely. Protected routes ensure only authenticated users can access gated content, and the login state is reflected across the entire application.',
+    deliverables: ['Google OAuth 2.0 fully integrated', 'Firebase Auth configured and connected', 'Session management and token handling', 'Protected routes for authenticated content', 'Login/logout UI states handled gracefully', 'User data stored securely in Firestore on signup'],
+    price: '$600', range: 'Market range · $300 – $1,000'
+  },
+  'dev-stripe': {
+    tag: 'Development', tagClass: 't-dev',
+    title: 'Stripe Payment Gateway Integration',
+    desc: 'Complete Stripe integration from first Checkout screen to confirmed subscription. This included building the payment flow, handling webhook events (payment success, failure, cancellation), displaying correct states to the user after each outcome, and securely connecting Stripe to Firebase to update subscription status in real time.',
+    deliverables: ['Stripe Checkout integrated and live', 'Subscription billing configured for recurring plans', 'Webhook endpoint built and deployed', 'Payment success / failure / cancelled states handled', 'Stripe ↔ Firebase sync on payment events', 'Test mode verified before going live'],
+    price: '$1,200', range: 'Market range · $700 – $2,500'
+  },
+  'dev-plans': {
+    tag: 'Development', tagClass: 't-dev',
+    title: 'Subscription Plan Architecture',
+    desc: 'The subscription tier system was designed and built entirely from scratch — including naming the plans, defining what each tier includes, and enforcing feature access based on the user\'s active plan. The plan names and content were also renamed and updated to better reflect the business\'s offering.',
+    deliverables: ['Plan tiers designed and named', 'Feature gating logic built and enforced', 'Plan content updated to match business strengths', 'Upgrade and downgrade paths handled', 'Active plan displayed to user post-login', 'Plans synced to Stripe products and prices'],
+    price: '$700', range: 'Market range · $400 – $1,200'
+  },
+  'dev-admin': {
+    tag: 'Development', tagClass: 't-dev',
+    title: 'Admin Panel — Subscription Management',
+    desc: 'A private admin dashboard was built to give the business owner full visibility over their subscriber base. Active subscriptions, plan types, and account status can all be viewed and managed from this panel — without needing to log into Stripe or Firebase directly.',
+    deliverables: ['Admin-only dashboard built and secured', 'Full subscriber list with plan and status', 'Real-time data from Firestore', 'Search and filter functionality', 'Subscription status indicators (active, cancelled, etc.)', 'Access restricted to admin credentials only'],
+    price: '$1,500', range: 'Market range · $800 – $3,000'
+  },
+  'dev-firebase': {
+    tag: 'Development', tagClass: 't-dev',
+    title: 'Firebase Backend & Database Integration',
+    desc: 'Firebase was configured as the full backend for this project — covering authentication, database, and hosting. The Firestore database was schema-designed to support users, subscriptions, and admin queries efficiently. Security rules were written to prevent unauthorised access while keeping the app responsive.',
+    deliverables: ['Firestore database schema designed', 'Collections for users, subscriptions, and admin data', 'Firebase security rules written and tested', 'Real-time data listeners where needed', 'Firebase project configured across environments', 'Error handling for all read/write operations'],
+    price: '$1,000', range: 'Market range · $600 – $2,000'
+  },
+  'dev-email': {
+    tag: 'Development', tagClass: 't-dev',
+    title: 'Email Automation System',
+    desc: 'Automated emails were set up to trigger based on user actions — including account signup confirmation, successful payment receipt, and subscription reminders. Email templates were designed to match the brand and configured for reliable delivery.',
+    deliverables: ['Signup confirmation email automated', 'Payment receipt email triggered on success', 'Subscription reminder / renewal emails', 'Email templates designed on-brand', 'Delivery pipeline configured and tested', 'Failed delivery handling in place'],
+    price: '$800', range: 'Market range · $400 – $1,500'
+  },
+  'content-copy': {
+    tag: 'Content', tagClass: 't-content',
+    title: 'SEO-Optimised Website Copywriting',
+    desc: 'Every word on the website was written specifically for this business — no generic filler, no AI-dumped text without strategy. Copy was crafted to speak to the target audience, highlight the academy\'s strengths, and be structured for search engine visibility from day one.',
+    deliverables: ['Hero headlines and subheadlines written', 'About section copy tailored to the brand story', 'Services and plan descriptions written', 'FAQ section written to address buyer objections', 'Meta titles and descriptions written for all pages', 'Keyword-conscious phrasing throughout'],
+    price: '$900', range: 'Market range · $500 – $2,000'
+  },
+  'content-hooks': {
+    tag: 'Content', tagClass: 't-content',
+    title: 'Conversion Hooks & Persuasive Copy',
+    desc: 'Beyond simply describing the service, the copy was written to actively convert. This included psychological trust signals, benefit-first framing (not feature-first), urgency language, and objection-handling text placed at the right moments in the user journey.',
+    deliverables: ['Benefit-led headlines that sell outcomes, not features', 'Trust signals placed at key decision points', 'Urgency and scarcity hooks where appropriate', 'Objection-handling copy near the pricing section', 'CTA microcopy optimised for click-through', 'Social proof framing integrated into the layout'],
+    price: '$500', range: 'Market range · $300 – $1,000'
+  },
+  'content-seo': {
+    tag: 'Content', tagClass: 't-content',
+    title: 'On-Page SEO Setup',
+    desc: 'The site was built with SEO fundamentals baked in from the start — not retrofitted. Proper heading hierarchy, semantic HTML, descriptive alt text on all images, Open Graph tags for social sharing, and structured data to help search engines understand the content.',
+    deliverables: ['Proper H1/H2/H3 heading hierarchy across all pages', 'Alt text written for all images', 'Open Graph meta tags for social previews', 'Canonical tags where needed', 'Structured markup considered in HTML', 'Page titles and descriptions optimised for CTR'],
+    price: '$400', range: 'Market range · $200 – $800'
+  },
+  'biz-stripe': {
+    tag: 'Business', tagClass: 't-biz',
+    title: 'Stripe Account Creation & Configuration',
+    desc: 'A brand new Stripe merchant account was created and fully configured for the business — including identity verification (KYC), tax and payout settings, and setting up the products and pricing in the Stripe dashboard to match the subscription plan structure.',
+    deliverables: ['Stripe merchant account created from scratch', 'KYC / identity verification completed', 'Bank payout account connected', 'Tax configuration set up', 'Subscription products and prices created in Stripe', 'Test mode verified before live launch'],
+    price: '$300', range: 'Market range · $150 – $500'
+  },
+  'infra-deploy': {
+    tag: 'Infrastructure', tagClass: 't-infra',
+    title: 'Firebase Hosting & Deployment Pipeline',
+    desc: 'The site was deployed to Firebase Hosting with a custom domain, free SSL certificate, and a clean deployment workflow. Environment configurations were set up so that updates can be pushed reliably without downtime.',
+    deliverables: ['Firebase Hosting configured and live', 'Custom domain connected and verified', 'SSL certificate active (HTTPS)', 'Firebase CLI deploy scripts set up', 'Environment separation (dev vs. production)', 'Zero-downtime deployment process established'],
+    price: '$400', range: 'Market range · $200 – $700'
+  },
+  'infra-arch': {
+    tag: 'Infrastructure', tagClass: 't-infra',
+    title: 'Project Architecture & Full System Design',
+    desc: 'Before writing a single line of code, the entire technical architecture was planned — choosing the right stack, mapping how each service would interact, and designing the data flow between authentication, payments, the database, email, and hosting. This prevented costly rework later and ensured all services work together seamlessly.',
+    deliverables: ['Technology stack selected and justified', 'Service integration map designed (auth ↔ DB ↔ payments ↔ email)', 'Data flow and state management planned', 'Security model designed from the start', 'Scalability considered in all structural decisions', 'All services connected into one cohesive system'],
+    price: '$800', range: 'Market range · $500 – $1,500'
+  }
+};
+
+function openModal(id) {
+  const s = services[id];
+  if (!s) return;
+  const tagEl = document.getElementById('modal-tag');
+  tagEl.textContent = s.tag;
+  tagEl.className = 'card-tag ' + s.tagClass;
+  document.getElementById('modal-title').textContent = s.title;
+  document.getElementById('modal-desc').textContent = s.desc;
+  const ul = document.getElementById('modal-deliverables');
+  ul.innerHTML = s.deliverables.map(d => `<li>${d}</li>`).join('');
+  document.getElementById('modal-price').textContent = s.price;
+  document.getElementById('modal-range').textContent = s.range;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function filter(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.service-card').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+  document.querySelectorAll('.section-heading, .services-grid').forEach(el => {
+    el.style.display = '';
+  });
+  if (cat !== 'all') {
+    document.querySelectorAll('.services-grid').forEach(grid => {
+      const visible = grid.querySelectorAll('.service-card:not(.hidden)');
+      const heading = grid.previousElementSibling;
+      if (visible.length === 0) {
+        grid.style.display = 'none';
+        if (heading && heading.classList.contains('section-heading')) heading.style.display = 'none';
+      }
+    });
+  }
+}
+
+// Scroll fade-in
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
