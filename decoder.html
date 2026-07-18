@@ -1,0 +1,1003 @@
+<title>The Decoder — Oracle 23ai, Demystified</title>
+<style>
+  :root{
+    --bg:#12151a; --panel:#181c23; --panel-2:#1e232c; --line:#2a313c;
+    --ink:#e7ebf0; --ink-soft:#aab3c0; --ink-faint:#77818f;
+    --brand:#ce3f2c;         /* the badge / marketing */
+    --brand-dim:#8f3327;
+    --signal:#37c9b0;        /* the decoded reality */
+    --signal-dim:#1f7d6e;
+    --amber:#e0a83b;         /* genuinely-Oracle engineering */
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 18px 40px -24px rgba(0,0,0,.8);
+    --mono:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    --serif:Georgia,"Iowan Old Style","Palatino Linotype","Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --rail:264px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#e9ebee; --panel:#f6f7f9; --panel-2:#ffffff; --line:#d3d8de;
+      --ink:#161b22; --ink-soft:#495260; --ink-faint:#7a838f;
+      --brand:#c0392a; --brand-dim:#a8331f;
+      --signal:#0f9e88; --signal-dim:#0c7d6c;
+      --amber:#b57e15;
+      --shadow:0 1px 0 rgba(255,255,255,.6), 0 20px 40px -28px rgba(20,30,45,.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12151a; --panel:#181c23; --panel-2:#1e232c; --line:#2a313c;
+    --ink:#e7ebf0; --ink-soft:#aab3c0; --ink-faint:#77818f;
+    --brand:#ce3f2c; --brand-dim:#8f3327; --signal:#37c9b0; --signal-dim:#1f7d6e; --amber:#e0a83b;
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 18px 40px -24px rgba(0,0,0,.8);
+  }
+  :root[data-theme="light"]{
+    --bg:#e9ebee; --panel:#f6f7f9; --panel-2:#ffffff; --line:#d3d8de;
+    --ink:#161b22; --ink-soft:#495260; --ink-faint:#7a838f;
+    --brand:#c0392a; --brand-dim:#a8331f; --signal:#0f9e88; --signal-dim:#0c7d6c; --amber:#b57e15;
+    --shadow:0 1px 0 rgba(255,255,255,.6), 0 20px 40px -28px rgba(20,30,45,.45);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+  body{margin:0}
+  .app{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    min-height:100vh; line-height:1.6; -webkit-font-smoothing:antialiased;
+    font-size:17px;
+  }
+  a{color:var(--signal); text-underline-offset:3px}
+  ::selection{background:var(--signal); color:#04120f}
+
+  /* ---------- layout ---------- */
+  .shell{display:grid; grid-template-columns:var(--rail) 1fr; align-items:start}
+  .rail{
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+    border-right:1px solid var(--line); background:var(--panel);
+    padding:26px 20px; display:flex; flex-direction:column; gap:22px;
+  }
+  .main{min-width:0; padding:0 clamp(20px,5vw,84px)}
+  .wrap{max-width:720px; margin:0 auto}
+
+  /* ---------- rail ---------- */
+  .brand-mark{font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint)}
+  .brand-mark b{color:var(--ink); display:block; font-size:19px; letter-spacing:.02em; margin-top:4px; text-transform:none}
+  .rail nav{display:flex; flex-direction:column; gap:2px}
+  .rail nav a{
+    display:flex; gap:12px; align-items:baseline; text-decoration:none; color:var(--ink-soft);
+    font-size:14.5px; padding:9px 10px; border-radius:8px; position:relative;
+  }
+  .rail nav a .n{font-family:var(--mono); font-size:12px; color:var(--ink-faint); width:20px; flex:none}
+  .rail nav a:hover{background:var(--panel-2); color:var(--ink)}
+  .rail nav a.active{background:var(--panel-2); color:var(--ink)}
+  .rail nav a.active::before{content:""; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:2px; background:var(--signal)}
+  .rail nav a .dot{margin-left:auto; width:7px; height:7px; border-radius:50%; border:1.5px solid var(--line); flex:none; align-self:center}
+  .rail nav a.done .dot{background:var(--signal); border-color:var(--signal)}
+  .progress-wrap{margin-top:auto; font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--ink-faint)}
+  .bar{height:6px; background:var(--panel-2); border-radius:99px; overflow:hidden; margin-top:8px; border:1px solid var(--line)}
+  .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--signal-dim),var(--signal)); transition:width .5s ease}
+  .theme-btn{
+    background:var(--panel-2); border:1px solid var(--line); color:var(--ink-soft);
+    font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    padding:8px 10px; border-radius:8px; cursor:pointer; text-align:left;
+  }
+  .theme-btn:hover{color:var(--ink); border-color:var(--ink-faint)}
+
+  /* ---------- hero ---------- */
+  .hero{padding:14vh 0 8vh; border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono); font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--brand); display:flex; align-items:center; gap:12px}
+  .eyebrow::after{content:""; height:1px; flex:1; background:linear-gradient(90deg,var(--brand-dim),transparent)}
+  h1.title{
+    font-family:var(--sans); font-weight:800; font-size:clamp(2.6rem,7vw,4.4rem);
+    line-height:1.02; letter-spacing:-.025em; margin:26px 0 0; text-wrap:balance;
+  }
+  h1.title .thru{position:relative; white-space:nowrap}
+  h1.title .thru::after{content:""; position:absolute; left:-2%; right:-2%; top:56%; height:.09em; background:var(--brand); transform:scaleX(0); transform-origin:left; animation:strike 1.1s .5s cubic-bezier(.7,0,.2,1) forwards}
+  @keyframes strike{to{transform:scaleX(1)}}
+  .lede{font-family:var(--serif); font-size:1.32rem; line-height:1.55; color:var(--ink-soft); margin:28px 0 0; max-width:60ch}
+  .lede b{color:var(--ink); font-style:italic}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:10px 26px; margin-top:34px; font-family:var(--mono); font-size:12.5px; letter-spacing:.05em; color:var(--ink-faint)}
+  .hero-meta span b{color:var(--signal); font-weight:400}
+
+  .legend{display:flex; flex-wrap:wrap; gap:18px; margin-top:30px; font-family:var(--mono); font-size:12px; color:var(--ink-soft)}
+  .legend i{display:inline-flex; align-items:center; gap:8px}
+  .legend i::before{content:""; width:11px; height:11px; border-radius:3px}
+  .lg-brand::before{background:var(--brand)} .lg-signal::before{background:var(--signal)} .lg-amber::before{background:var(--amber)}
+
+  /* ---------- module blocks ---------- */
+  section.module{padding:9vh 0; border-bottom:1px solid var(--line); scroll-margin-top:10px}
+  .mod-head{display:flex; align-items:flex-start; gap:20px}
+  .mod-num{font-family:var(--mono); font-size:13px; letter-spacing:.1em; color:var(--brand); border:1px solid var(--brand-dim); border-radius:8px; padding:6px 10px; flex:none; margin-top:6px}
+  .mod-head h2{font-size:clamp(1.7rem,4vw,2.4rem); font-weight:800; letter-spacing:-.02em; margin:0; line-height:1.08; text-wrap:balance}
+  .mod-sub{font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; color:var(--ink-faint); margin:10px 0 0; text-transform:uppercase}
+  .real{font-family:var(--serif); font-size:1.15rem; color:var(--ink-soft); margin:22px 0 0}
+  .real b{color:var(--signal); font-style:normal}
+  .time-chip{font-family:var(--mono); font-size:11px; color:var(--ink-faint); border:1px solid var(--line); border-radius:99px; padding:4px 10px; margin-left:auto; flex:none; margin-top:6px}
+
+  p{margin:18px 0} p.body{color:var(--ink-soft)}
+  h3.sub{font-family:var(--mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); margin:44px 0 4px; display:flex; align-items:center; gap:10px}
+  h3.sub::before{content:""; width:16px; height:1px; background:var(--signal)}
+
+  /* flip cards: brand -> truth */
+  .cards{display:grid; gap:14px; margin-top:22px}
+  .flip{perspective:1400px; cursor:pointer}
+  .flip-in{position:relative; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.4,.1,.2,1); min-height:118px}
+  .flip.open .flip-in{transform:rotateX(180deg)}
+  .face{position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; padding:18px 20px; display:flex; flex-direction:column; justify-content:center; border:1px solid var(--line); box-shadow:var(--shadow)}
+  .face.front{background:var(--panel); background-image:linear-gradient(180deg,rgba(206,63,44,.06),transparent)}
+  .face.back{background:var(--panel-2); transform:rotateX(180deg); background-image:linear-gradient(180deg,rgba(55,201,176,.07),transparent)}
+  .badge-term{font-family:var(--mono); font-weight:600; font-size:1.05rem; letter-spacing:.02em; color:var(--brand); text-transform:uppercase}
+  .genuine .badge-term{color:var(--amber)}
+  .flip-hint{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--ink-faint); text-transform:uppercase; margin-top:10px}
+  .genuine-tag{position:absolute; top:12px; right:14px; font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; color:var(--amber); border:1px solid var(--amber); border-radius:99px; padding:3px 8px; text-transform:uppercase}
+  .truth-label{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--signal); margin-bottom:7px}
+  .truth{font-family:var(--serif); font-size:1rem; line-height:1.45; color:var(--ink)}
+
+  /* callouts */
+  .callout{border:1px solid var(--line); border-left:3px solid var(--signal); background:var(--panel); border-radius:0 12px 12px 0; padding:18px 22px; margin:26px 0}
+  .callout.hands{border-left-color:var(--amber)}
+  .callout .k{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--signal); margin-bottom:8px}
+  .callout.hands .k{color:var(--amber)}
+  .callout p{margin:6px 0 0; color:var(--ink-soft); font-size:.98rem}
+  .callout code{font-family:var(--mono); font-size:.85em; background:var(--panel-2); border:1px solid var(--line); padding:1px 6px; border-radius:5px; color:var(--ink)}
+
+  /* the "done when" test -> checkable */
+  .test{display:flex; gap:14px; align-items:flex-start; margin:30px 0 0; padding:18px 20px; border:1px dashed var(--line); border-radius:12px; background:var(--panel); cursor:pointer; user-select:none}
+  .test:hover{border-color:var(--signal-dim)}
+  .test .box{width:22px; height:22px; border-radius:6px; border:2px solid var(--ink-faint); flex:none; margin-top:2px; display:grid; place-items:center; transition:.2s}
+  .test .box svg{width:13px; height:13px; opacity:0; transform:scale(.5); transition:.2s}
+  .test.checked .box{background:var(--signal); border-color:var(--signal)}
+  .test.checked .box svg{opacity:1; transform:scale(1)}
+  .test .box svg path{stroke:#04120f}
+  .test .t-lab{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint)}
+  .test .t-txt{font-family:var(--serif); font-size:1.08rem; color:var(--ink); margin-top:5px; line-height:1.4}
+  .test.checked .t-txt{color:var(--ink-soft)}
+
+  /* widget shell */
+  .widget{border:1px solid var(--line); border-radius:14px; background:var(--panel); margin-top:26px; overflow:hidden; box-shadow:var(--shadow)}
+  .widget-top{display:flex; align-items:center; gap:10px; padding:13px 18px; border-bottom:1px solid var(--line); background:var(--panel-2)}
+  .widget-top .dotrow{display:flex; gap:6px} .widget-top .dotrow i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .widget-top .wt{font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
+  .widget-body{padding:20px}
+  .lab-hint{font-family:var(--serif); font-size:.98rem; color:var(--ink-soft); margin:0 0 16px}
+
+  .btn{font-family:var(--mono); font-size:12px; letter-spacing:.06em; padding:9px 14px; border-radius:8px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); cursor:pointer; transition:.15s}
+  .btn:hover{border-color:var(--signal); color:var(--signal)}
+  .btn.primary{background:var(--signal); border-color:var(--signal); color:#04120f; font-weight:600}
+  .btn.primary:hover{filter:brightness(1.08); color:#04120f}
+  .btn.brandbtn{background:var(--brand); border-color:var(--brand); color:#fff}
+  .segbtns{display:flex; gap:0; border:1px solid var(--line); border-radius:9px; overflow:hidden; width:max-content}
+  .segbtns button{font-family:var(--mono); font-size:12px; padding:8px 16px; background:var(--panel-2); border:0; color:var(--ink-soft); cursor:pointer; border-right:1px solid var(--line)}
+  .segbtns button:last-child{border-right:0}
+  .segbtns button.on{background:var(--signal); color:#04120f; font-weight:600}
+
+  pre.code{font-family:var(--mono); font-size:12.5px; line-height:1.6; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow-x:auto; margin:0; color:var(--ink)}
+  pre.code .kw{color:var(--brand)} pre.code .st{color:var(--signal)} pre.code .cm{color:var(--ink-faint)} pre.code .nm{color:var(--amber)}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media (max-width:620px){.grid2{grid-template-columns:1fr}}
+  .muted{color:var(--ink-faint); font-size:.9rem; font-family:var(--mono)}
+
+  /* module 0 sorter */
+  .terms{display:flex; flex-wrap:wrap; gap:9px; margin:4px 0 16px}
+  .term{font-family:var(--mono); font-size:12.5px; padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink-soft); cursor:pointer; transition:.15s}
+  .term:hover{border-color:var(--ink-faint); color:var(--ink)}
+  .term.pick{border-color:var(--amber); color:var(--amber); background:rgba(224,168,59,.08)}
+  .term.reveal-yes{border-color:var(--amber); color:var(--amber); background:rgba(224,168,59,.14)}
+  .term.reveal-no{opacity:.5}
+  .term.wrong{border-color:var(--brand); color:var(--brand)}
+  .sorter-msg{font-family:var(--serif); font-size:1.02rem; color:var(--ink); min-height:1.4em; margin-top:6px}
+
+  /* cosine canvas */
+  .cos-wrap{display:grid; grid-template-columns:1fr 200px; gap:18px; align-items:center}
+  @media (max-width:620px){.cos-wrap{grid-template-columns:1fr}}
+  canvas{width:100%; height:auto; display:block; border-radius:10px; background:var(--panel-2); border:1px solid var(--line); touch-action:none; cursor:grab}
+  .cos-read{font-family:var(--mono); font-size:13px; display:flex; flex-direction:column; gap:12px}
+  .cos-read .row{display:flex; justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:8px}
+  .cos-read .row b{color:var(--signal); font-weight:400; font-variant-numeric:tabular-nums}
+  .cos-read .verdict{font-family:var(--serif); font-size:1rem; color:var(--ink)}
+  .simrow{display:flex; align-items:center; gap:12px; margin:7px 0; font-size:13.5px}
+  .simrow .txt{flex:1; font-family:var(--sans); color:var(--ink)}
+  .simrow .track{width:110px; height:8px; background:var(--panel-2); border:1px solid var(--line); border-radius:99px; overflow:hidden; flex:none}
+  .simrow .track i{display:block; height:100%; background:var(--signal); border-radius:99px}
+  .simrow .val{font-family:var(--mono); font-size:12px; color:var(--ink-faint); width:44px; text-align:right; font-variant-numeric:tabular-nums}
+  #simInput{width:100%; font-family:var(--sans); font-size:14px; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); margin-bottom:12px}
+  #simInput:focus{outline:2px solid var(--signal); outline-offset:1px; border-color:var(--signal)}
+
+  /* nl2sql guesser */
+  .nlq{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px}
+  .interp{border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-top:12px; background:var(--panel-2)}
+  .interp .h{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--brand); margin-bottom:8px; display:flex; justify-content:space-between}
+  .interp .h .pct{color:var(--ink-faint)}
+  .interp .def{font-family:var(--serif); font-size:.95rem; color:var(--ink-soft); margin-top:8px}
+
+  /* columnar */
+  .rowcol{display:grid; gap:4px}
+  .rc-row{display:grid; grid-template-columns:repeat(4,1fr); gap:4px}
+  .cell{font-family:var(--mono); font-size:11.5px; padding:9px 8px; border-radius:6px; text-align:center; border:1px solid var(--line); background:var(--panel-2); color:var(--ink-soft); transition:.25s}
+  .cell.head{color:var(--ink); background:var(--panel); font-weight:600}
+  .cell.hot{background:var(--signal); color:#04120f; border-color:var(--signal)}
+  .cell.cold{opacity:.35}
+  .scan-note{font-family:var(--mono); font-size:12px; color:var(--ink-faint); margin-top:12px; font-variant-numeric:tabular-nums}
+
+  /* rpo/rto timeline */
+  .tl{position:relative; height:120px; margin:26px 0 8px}
+  .tl .axis{position:absolute; left:0; right:0; top:60px; height:2px; background:var(--line)}
+  .tl .crash{position:absolute; top:38px; width:2px; height:46px; background:var(--brand)}
+  .tl .crash::after{content:"CRASH"; position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; color:var(--brand); white-space:nowrap}
+  .tl .rpo, .tl .rto{position:absolute; top:60px; height:34px; border-radius:6px}
+  .tl .rpo{background:rgba(206,63,44,.18); border:1px solid var(--brand-dim); top:26px; height:26px}
+  .tl .rto{background:rgba(55,201,176,.14); border:1px solid var(--signal-dim); top:60px; height:26px}
+  .tl .lbl{position:absolute; font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--ink-soft); top:2px}
+  .slider-row{display:flex; align-items:center; gap:14px; margin:8px 0; font-family:var(--mono); font-size:12.5px}
+  .slider-row label{width:56px; color:var(--ink-soft)}
+  .slider-row input[type=range]{flex:1; accent-color:var(--signal)}
+  .slider-row .out{width:96px; text-align:right; color:var(--signal); font-variant-numeric:tabular-nums}
+
+  .tradeoff{display:grid; gap:12px}
+  .to-item{display:grid; grid-template-columns:180px 1fr; gap:14px; align-items:center; font-size:14px}
+  @media(max-width:560px){.to-item{grid-template-columns:1fr}}
+  .to-item .lab{font-family:var(--mono); font-size:12px; color:var(--ink)}
+  .to-item .meter{height:26px; border-radius:7px; background:var(--panel-2); border:1px solid var(--line); position:relative; overflow:hidden}
+  .to-item .meter i{position:absolute; inset:0; width:var(--w,50%); border-radius:6px}
+  .to-item.good .meter i{background:linear-gradient(90deg,var(--signal-dim),var(--signal))}
+  .to-item.bad .meter i{background:linear-gradient(90deg,var(--brand-dim),var(--brand))}
+  .to-item .meter span{position:absolute; right:10px; top:50%; transform:translateY(-50%); font-family:var(--mono); font-size:10.5px; color:var(--ink); mix-blend-mode:difference}
+
+  footer{padding:8vh 0 12vh}
+  .foot-answer{border:1px solid var(--amber); border-radius:14px; padding:26px 28px; background:linear-gradient(180deg,rgba(224,168,59,.06),transparent)}
+  .foot-answer .k{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--amber); margin-bottom:14px}
+  .foot-answer ol{margin:0; padding-left:22px}
+  .foot-answer li{margin:12px 0; font-family:var(--serif); font-size:1.06rem; color:var(--ink)}
+  .foot-answer li b{color:var(--amber); font-family:var(--mono); font-size:.92em; letter-spacing:.02em}
+  .foot-note{font-family:var(--serif); font-size:1rem; color:var(--ink-soft); margin-top:20px; font-style:italic}
+  .signoff{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; margin-top:40px; text-align:center}
+
+  /* mobile rail -> topbar */
+  .menu-toggle{display:none}
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr}
+    .rail{position:sticky; top:0; height:auto; flex-direction:row; align-items:center; gap:16px; padding:12px 16px; z-index:40; flex-wrap:wrap}
+    .rail nav{flex-direction:row; overflow-x:auto; gap:2px; flex:1; scrollbar-width:none}
+    .rail nav::-webkit-scrollbar{display:none}
+    .rail nav a{padding:7px 10px; white-space:nowrap} .rail nav a .dot{display:none} .rail nav a .lab-txt{display:none}
+    .rail nav a.active::before{display:none} .rail nav a.active{outline:1px solid var(--signal)}
+    .progress-wrap{margin:0; order:-1; width:100%} .brand-mark{flex:none}
+    .hero{padding:8vh 0 6vh}
+  }
+</style>
+
+<div class="app">
+<div class="shell">
+
+  <aside class="rail">
+    <div class="brand-mark">Field Guide<b>The Decoder</b></div>
+    <nav id="nav"></nav>
+    <button class="theme-btn" id="themeBtn">◑ Theme</button>
+    <div class="progress-wrap">
+      <span id="pcount">0 / 6 modules cleared</span>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+  </aside>
+
+  <main class="main">
+  <div class="wrap">
+
+    <!-- HERO -->
+    <header class="hero" id="top">
+      <div class="eyebrow">Reda Rizwan session · 18 Jul 2026 · ~8 hours</div>
+      <h1 class="title">Every bullet on the slide is a <span class="thru">generic idea</span> wearing an Oracle badge.</h1>
+      <p class="lede">This is a decoder for the <b>Oracle Database 23ai / AI Data Platform</b> talk. Six modules. Each one does the same move: the real computer-science concept first, the brand name second, a 20-minute build third, and a one-sentence test you have to pass. Peel the sticker off once and it transfers to every vendor on earth.</p>
+      <div class="legend">
+        <i class="lg-brand">the marketing word</i>
+        <i class="lg-signal">what it actually is</i>
+        <i class="lg-amber">genuinely Oracle-built</i>
+      </div>
+      <div class="hero-meta">
+        <span>13 terms in the notes</span>
+        <span>only <b>3</b> are real Oracle engineering</span>
+        <span>tap any card to decode it</span>
+      </div>
+    </header>
+
+    <!-- MODULE 0 -->
+    <section class="module" id="m0" data-mod="0">
+      <div class="mod-head">
+        <div class="mod-num">00</div>
+        <div>
+          <h2>The frame: spot the pattern</h2>
+          <div class="mod-sub">The landing pages · read to see the trick, not to learn</div>
+        </div>
+        <div class="time-chip">15 min</div>
+      </div>
+      <p class="real">Open Oracle's <b>Database 23ai</b> and <b>AI Data Platform</b> pages. Your only job: finish able to say out loud — <em>“every one of these bullets is a generic database concept with an Oracle badge on it.”</em> Once you see it, the other seven hours are downhill. Don't skip this.</p>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">Warm-up · which 3 of 13 are real Oracle engineering?</div></div>
+        <div class="widget-body">
+          <p class="lab-hint">Before you learn anything, guess. Tap the terms you think are genuinely Oracle-specific engineering — not an industry idea with a sticker on it. Pick exactly three, then reveal.</p>
+          <div class="terms" id="sorter"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+            <button class="btn primary" id="sorterReveal">Reveal the 3</button>
+            <button class="btn" id="sorterReset">Reset</button>
+            <span class="muted" id="sorterCount">0 / 3 picked</span>
+          </div>
+          <p class="sorter-msg" id="sorterMsg"></p>
+        </div>
+      </div>
+
+      <div class="test" data-test="0">
+        <div class="box"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t-lab">Done when</div><div class="t-txt">You can name which 3 of the 13 terms are genuinely Oracle-specific engineering.</div></div>
+      </div>
+    </section>
+
+    <!-- MODULE 1 -->
+    <section class="module" id="m1" data-mod="1">
+      <div class="mod-head">
+        <div class="mod-num">01</div>
+        <div><h2>Database foundations</h2><div class="mod-sub">Converged DB · Mission-critical · JSON Duality</div></div>
+        <div class="time-chip">90 min</div>
+      </div>
+      <p class="real">Real subject: <b>database systems</b> — the relational model, ACID, storage engines. Nail the vocabulary below, then meet the one genuinely novel feature in the whole talk.</p>
+
+      <div class="cards" id="cards1"></div>
+
+      <h3 class="sub">Learn</h3>
+      <p class="body">ACID, normalisation, indexes (≈45 min, any decent primer — you likely have most of this). Then read <em>one</em> blog for each side of <b>“polyglot persistence vs converged.”</b> There's a real argument here and Oracle only tells you their half; Snowflake, Mongo and Databricks all disagree, partly on technical grounds and partly on commercial ones.</p>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">JSON Relational Duality · the same rows, two shapes</div></div>
+        <div class="widget-body">
+          <p class="lab-hint">One store, one source of truth. Read it as normalised tables, or as a nested JSON document — Oracle keeps them in sync and lets you <em>write</em> through either. Flip the view:</p>
+          <div class="segbtns" id="dualToggle" style="margin-bottom:16px">
+            <button data-v="rel" class="on">Relational tables</button>
+            <button data-v="json">JSON document</button>
+          </div>
+          <div id="dualView"></div>
+        </div>
+      </div>
+
+      <div class="callout hands">
+        <div class="k">Hands-on · 20 min</div>
+        <p>In Postgres (Supabase free tier is fine) make a <code>users</code> table and a <code>users_json</code> view returning the same rows as nested JSON. You just hand-rolled read-only Duality. Now try to make it <em>writable</em> — you'll fail, and <b>that failure is exactly what Oracle is selling.</b></p>
+      </div>
+
+      <div class="test" data-test="1">
+        <div class="box"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t-lab">Done when</div><div class="t-txt">You can explain in one sentence why a converged DB is a <em>tradeoff</em>, not a free win.</div></div>
+      </div>
+    </section>
+
+    <!-- MODULE 2 -->
+    <section class="module" id="m2" data-mod="2">
+      <div class="mod-head">
+        <div class="mod-num">02</div>
+        <div><h2>Vectors &amp; embeddings</h2><div class="mod-sub">“Vector DB” · information retrieval + a little linear algebra</div></div>
+        <div class="time-chip">90 min</div>
+      </div>
+      <p class="real">An embedding turns a chunk of text into ~1000 numbers where <b>distance ≈ meaning</b>. Similar text lands close together. Search becomes geometry.</p>
+
+      <div class="cards" id="cards2"></div>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">Cosine similarity · drag the vectors</div></div>
+        <div class="widget-body">
+          <p class="lab-hint">Cosine similarity ignores length and measures <em>angle</em>: 1.0 = same direction (same meaning), 0 = unrelated, −1 = opposite. Drag either arrowhead.</p>
+          <div class="cos-wrap">
+            <canvas id="cosCanvas" width="440" height="440" aria-label="Two draggable vectors"></canvas>
+            <div class="cos-read">
+              <div class="row"><span>A</span><b id="vA">(1, 0)</b></div>
+              <div class="row"><span>B</span><b id="vB">(0, 1)</b></div>
+              <div class="row"><span>angle</span><b id="ang">90°</b></div>
+              <div class="row"><span>cos&nbsp;θ</span><b id="cos">0.00</b></div>
+              <div class="verdict" id="cosVerdict">Perpendicular — unrelated meaning.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">Tiny semantic search · type a query</div></div>
+        <div class="widget-body">
+          <p class="lab-hint">A toy “embedding” ranks these 6 sentences by meaning, not keywords. Try <code>coffee</code>, <code>weather</code>, or <code>money</code> — notice matches with none of your words.</p>
+          <input id="simInput" placeholder="type a query…" value="hot drink in the morning" />
+          <div id="simResults"></div>
+        </div>
+      </div>
+
+      <p class="body"><b>The unglamorous truth:</b> a “vector database” is not a category of database — it's an <em>index type</em>. Postgres has it (pgvector), Oracle added it in 23ai, Mongo added it, everyone added it. Exact nearest-neighbour search doesn't scale, so you use <b>ANN</b> (approximate) via <b>HNSW</b> or <b>IVF</b> indexes: they trade a little accuracy for enormous speed by not checking every point. Pinecone and Weaviate exist because incumbents were slow — and that window is closing.</p>
+
+      <div class="callout hands">
+        <div class="k">Hands-on · 25 min</div>
+        <p>Run <code>pgvector</code> on Supabase. Embed 20 sentences, query the nearest 3. ~20 lines of Python. That's the whole concept.</p>
+      </div>
+
+      <div class="test" data-test="2">
+        <div class="box"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t-lab">Done when</div><div class="t-txt">You can say why HNSW trades accuracy for speed, and roughly how.</div></div>
+      </div>
+    </section>
+
+    <!-- MODULE 3 -->
+    <section class="module" id="m3" data-mod="3">
+      <div class="mod-head">
+        <div class="mod-num">03</div>
+        <div><h2>RAG, NL2SQL &amp; agents</h2><div class="mod-sub">Select AI · deep research · RAG · privacy agent</div></div>
+        <div class="time-chip">2 hours</div>
+      </div>
+      <p class="real">Real subject: <b>applied LLM engineering</b> — the module closest to what you already build. Most of it is industry-standard; Oracle's contribution is putting NL2SQL <em>inside the SQL engine</em>.</p>
+
+      <div class="cards" id="cards3"></div>
+
+      <p class="body"><b>Why NL2SQL is hard</b> — the interesting part no vendor deck admits. The model must know your schema, your business definitions (“active customer” = ?), and it <em>fails silently</em>: a wrong query returns a confident, plausible, wrong number. Demo schemas are clean; real ones aren't. Benchmark accuracy (Spider, BIRD) sits far below the demo on messy real-world schemas.</p>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">Watch it guess · one question, many “right” answers</div></div>
+        <div class="widget-body">
+          <p class="lab-hint">Ask an ambiguous question over a 3-table schema. There's no bug here — each reading is defensible, and the model just <em>picks one</em> and hands you a confident number. That's the failure mode.</p>
+          <div class="nlq" id="nlqButtons"></div>
+          <div id="nlqOut"></div>
+        </div>
+      </div>
+
+      <div class="callout hands">
+        <div class="k">Hands-on · 30 min</div>
+        <p>You've built MCP servers — build a tiny NL2SQL tool over a 3-table SQLite schema, then ask it “how many active users?” and watch it guess. That single experiment teaches more than the whole talk.</p>
+      </div>
+
+      <div class="test" data-test="3">
+        <div class="box"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t-lab">Done when</div><div class="t-txt">You can explain to a non-technical person why NL2SQL demos always work and NL2SQL products often don't.</div></div>
+      </div>
+    </section>
+
+    <!-- MODULE 4 -->
+    <section class="module" id="m4" data-mod="4">
+      <div class="mod-head">
+        <div class="mod-num">04</div>
+        <div><h2>Lakehouse &amp; open table formats</h2><div class="mod-sub">AI Lakehouse · Iceberg · “end data lock-in”</div></div>
+        <div class="time-chip">90 min</div>
+      </div>
+      <p class="real">Real subject: <b>data engineering</b> — the 20-year arc from warehouse → lake → lakehouse, and why an open <em>table format</em> is now the political center of the whole industry.</p>
+
+      <div class="cards" id="cards4"></div>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">Row store vs columnar · why analytics loves columns</div></div>
+        <div class="widget-body">
+          <p class="lab-hint">Query: <code>SELECT AVG(salary) FROM employees</code>. A row store must read every field of every row to reach one column. A columnar store (Parquet) reads only the <em>salary</em> column. Watch what each has to touch:</p>
+          <div class="segbtns" id="storeToggle" style="margin-bottom:16px">
+            <button data-v="row" class="on">Row store</button>
+            <button data-v="col">Columnar (Parquet)</button>
+          </div>
+          <div class="rowcol" id="rowcolGrid"></div>
+          <div class="scan-note" id="scanNote"></div>
+        </div>
+      </div>
+
+      <p class="body"><b>The politics:</b> <b>Iceberg</b> is a metadata layer over Parquet files in your own object storage that adds ACID transactions, schema evolution and time-travel to a pile of files in S3. If your data lives in open Iceberg tables, <em>any</em> engine — Oracle, Snowflake, Databricks, DuckDB — can read it, and switching vendors stops being a two-year migration. That's why “end data lock-in” is on the slide. Every vendor now claims to love Iceberg; every vendor also wants you running <em>their</em> engine on it. Oracle putting it up is defensive, not generous.</p>
+
+      <div class="callout hands">
+        <div class="k">Hands-on · 20 min</div>
+        <p>DuckDB locally: read a Parquet file, run a <code>GROUP BY</code>, feel how fast columnar is. Optional: PyIceberg on local files for time travel.</p>
+      </div>
+
+      <div class="test" data-test="4">
+        <div class="box"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t-lab">Done when</div><div class="t-txt">You can explain what a table format adds that a file format doesn't.</div></div>
+      </div>
+    </section>
+
+    <!-- MODULE 5 -->
+    <section class="module" id="m5" data-mod="5">
+      <div class="mod-head">
+        <div class="mod-num">05</div>
+        <div><h2>Autonomous DB &amp; multicloud</h2><div class="mod-sub">ADB · Autonomous AI DB · AI Multicloud · “manage how you want”</div></div>
+        <div class="time-chip">60 min</div>
+      </div>
+      <p class="real">Real subject: <b>cloud architecture &amp; managed services</b>. The automation is genuinely good; the word “autonomous” is doing marketing work; “multicloud” is a distribution strategy.</p>
+
+      <div class="cards" id="cards5"></div>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">The managed-service trade · drag the dial</div></div>
+        <div class="widget-body">
+          <p class="lab-hint">Moving from self-hosted → fully managed. Nothing is free: every notch you gain on ops, you pay for somewhere else. Slide it.</p>
+          <div class="slider-row"><label>self-host</label><input type="range" id="managedSlider" min="0" max="100" value="50"><label style="text-align:right">managed</label></div>
+          <div class="tradeoff" id="tradeoff" style="margin-top:18px"></div>
+        </div>
+      </div>
+
+      <p class="body"><b>Why multicloud exists:</b> enterprises already standing on Azure won't move — so Oracle moved to <em>them</em> (Oracle Database@Azure and friends put Oracle DB inside AWS/Azure/GCP data centres). It's distribution, not generosity.</p>
+
+      <div class="callout hands">
+        <div class="k">Hands-on · 15 min</div>
+        <p>Oracle Cloud Always-Free includes 2 Autonomous Databases. Spin one up, run one query, and note how long it took vs <code>docker run postgres</code>. That comparison <em>is</em> the lesson.</p>
+      </div>
+
+      <div class="test" data-test="5">
+        <div class="box"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t-lab">Done when</div><div class="t-txt">You can state one concrete situation where autonomous / managed is the wrong choice.</div></div>
+      </div>
+    </section>
+
+    <!-- MODULE 6 -->
+    <section class="module" id="m6" data-mod="6">
+      <div class="mod-head">
+        <div class="mod-num">06</div>
+        <div><h2>Security, DR &amp; ZDLRA</h2><div class="mod-sub">Security in the age of AI · “end data risk” · ZDLRA</div></div>
+        <div class="time-chip">60 min</div>
+      </div>
+      <p class="real">Real subject: <b>data security &amp; business continuity</b>. Learn two acronyms properly — they are the vocabulary of the entire field — then see why RAG makes an old security problem harder.</p>
+
+      <div class="cards" id="cards6"></div>
+
+      <div class="widget">
+        <div class="widget-top"><div class="dotrow"><i></i><i></i><i></i></div><div class="wt">RPO &amp; RTO · the two numbers that define disaster recovery</div></div>
+        <div class="widget-body">
+          <p class="lab-hint"><b>RPO</b> = how much data you can afford to lose (the gap back to your last good copy). <b>RTO</b> = how long you can be down. Drag them and watch the cost story. ZDLRA's whole pitch is pushing RPO to ≈ 0.</p>
+          <div class="slider-row"><label>RPO</label><input type="range" id="rpoSlider" min="0" max="100" value="60"><span class="out" id="rpoOut"></span></div>
+          <div class="slider-row"><label>RTO</label><input type="range" id="rtoSlider" min="5" max="100" value="55"><span class="out" id="rtoOut"></span></div>
+          <div class="tl" id="tl">
+            <div class="rpo" id="tlRpo"><span class="lbl">data lost</span></div>
+            <div class="rto" id="tlRto"><span class="lbl">downtime</span></div>
+            <div class="axis"></div>
+            <div class="crash" id="tlCrash"></div>
+          </div>
+          <p class="scan-note" id="drNote"></p>
+        </div>
+      </div>
+
+      <p class="body"><b>The genuinely-new bit:</b> prompt injection, and the fact that <b>RAG breaks row-level security.</b> Your database carefully enforces who can see which rows — but if your vector index contains chunks a user isn't authorised to see, your chatbot will cheerfully retrieve and leak them. The access control lived in the DB; the embeddings escaped it. Read one article on RAG + access control.</p>
+
+      <div class="test" data-test="6">
+        <div class="box"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t-lab">Done when</div><div class="t-txt">You can explain why RAG makes an old security problem harder.</div></div>
+      </div>
+    </section>
+
+    <!-- FOOTER / ANSWER -->
+    <footer>
+      <div class="foot-answer">
+        <div class="k">Module 0 · the answer</div>
+        <ol>
+          <li><b>JSON RELATIONAL DUALITY</b> — a real, novel feature. The same data, live-editable as tables and as documents. Not a rebrand.</li>
+          <li><b>ZDLRA</b> — Zero Data Loss Recovery Appliance. Actual purpose-built hardware that ships redo logs continuously so RPO ≈ 0. No direct competitor equivalent.</li>
+          <li><b>SELECT AI</b> — a real product integration: NL2SQL living inside the SQL engine itself, even though NL2SQL isn't Oracle's invention.</li>
+        </ol>
+        <p class="foot-note">Everything else — vector DB, RAG, converged DB, lakehouse, Iceberg, multicloud, autonomous, privacy agent, deep research — is an industry concept with an Oracle sticker. Learn it once, and it transfers to every vendor on earth.</p>
+      </div>
+      <div class="signoff">— from the notes · Reda Rizwan session · 18 Jul 2026 —</div>
+    </footer>
+
+  </div>
+  </main>
+</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+
+  /* ---------- theme ---------- */
+  var tbtn=document.getElementById('themeBtn');
+  function sysDark(){return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;}
+  var stored=null; try{stored=localStorage.getItem('dec-theme');}catch(e){}
+  if(stored){root.setAttribute('data-theme',stored);}
+  function cur(){return root.getAttribute('data-theme')||(sysDark()?'dark':'light');}
+  tbtn.addEventListener('click',function(){
+    var next=cur()==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('dec-theme',next);}catch(e){}
+    drawCos();
+  });
+
+  /* ---------- nav build ---------- */
+  var mods=[
+    {id:'m0',n:'00',t:'The frame'},{id:'m1',n:'01',t:'DB foundations'},
+    {id:'m2',n:'02',t:'Vectors'},{id:'m3',n:'03',t:'RAG & NL2SQL'},
+    {id:'m4',n:'04',t:'Lakehouse'},{id:'m5',n:'05',t:'Autonomous DB'},
+    {id:'m6',n:'06',t:'Security & DR'}
+  ];
+  var nav=document.getElementById('nav');
+  mods.forEach(function(m){
+    var a=document.createElement('a');
+    a.href='#'+m.id; a.dataset.target=m.id;
+    a.innerHTML='<span class="n">'+m.n+'</span><span class="lab-txt">'+m.t+'</span><span class="dot"></span>';
+    nav.appendChild(a);
+  });
+  var navLinks=Array.prototype.slice.call(nav.querySelectorAll('a'));
+
+  /* ---------- progress (localStorage) ---------- */
+  var doneSet={}; try{doneSet=JSON.parse(localStorage.getItem('dec-done')||'{}')||{};}catch(e){doneSet={};}
+  var tests=Array.prototype.slice.call(document.querySelectorAll('.test'));
+  function saveDone(){try{localStorage.setItem('dec-done',JSON.stringify(doneSet));}catch(e){}}
+  function refreshProgress(){
+    var n=0; for(var k in doneSet){if(doneSet[k])n++;}
+    document.getElementById('pcount').textContent=n+' / 6 modules cleared';
+    document.getElementById('pbar').style.width=(n/6*100)+'%';
+    navLinks.forEach(function(a){
+      var idx=a.dataset.target.replace('m','');
+      a.classList.toggle('done',!!doneSet[idx]&&idx!=='0');
+    });
+  }
+  tests.forEach(function(t){
+    var id=t.dataset.test;
+    if(doneSet[id])t.classList.add('checked');
+    t.addEventListener('click',function(){
+      doneSet[id]=!t.classList.contains('checked');
+      t.classList.toggle('checked'); saveDone(); refreshProgress();
+    });
+  });
+  refreshProgress();
+
+  /* ---------- scroll spy ---------- */
+  var secs=Array.prototype.slice.call(document.querySelectorAll('section.module, header.hero'));
+  var spy=new IntersectionObserver(function(ents){
+    ents.forEach(function(e){
+      if(e.isIntersecting){
+        var id=e.target.id;
+        navLinks.forEach(function(a){a.classList.toggle('active',a.dataset.target===id);});
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(function(s){spy.observe(s);});
+
+  /* ---------- brand -> truth flip cards ---------- */
+  var cardData={
+    1:[
+      {t:'Converged Database',d:'One engine storing relational + JSON + graph + vector + spatial, instead of running five separate databases. Their counter-pitch to the polyglot-persistence school.'},
+      {t:'Mission-critical foundation',d:'Uptime, failover, replication (RAC, Data Guard). The claim is simply: “our DB doesn\'t fall over.”'},
+      {t:'JSON Relational Duality',d:'Define a view so the same data is readable AND writable as normalised tables and as a JSON document. Kills the object-relational impedance mismatch. Real engineering.',g:true}
+    ],
+    2:[
+      {t:'Vector DB',d:'Not a category of database — an index type. Store embeddings, search by distance. pgvector, Oracle 23ai, Mongo, everyone has it now.'}
+    ],
+    3:[
+      {t:'RAG',d:'Retrieval-Augmented Generation: search first, stuff results into the prompt, then generate. Industry-standard, not Oracle\'s.'},
+      {t:'Select AI',d:'Oracle\'s NL2SQL feature: you write SELECT AI \'how many customers churned last month\' and it generates + runs the SQL. Real integration.',g:true},
+      {t:'Deep research AI',d:'Marketing term for multi-step agentic retrieval: search → read → search again → synthesise.'},
+      {t:'Privacy agent',d:'An LLM-driven layer that detects and masks PII before it leaves the database.'}
+    ],
+    4:[
+      {t:'AI Lakehouse',d:'Warehouse-style tables + data-lake economics: structured queries over cheap object storage. A 20-year architectural arc, not a product Oracle invented.'},
+      {t:'Apache Iceberg',d:'A table format: metadata over Parquet files in object storage giving ACID, schema evolution and time-travel on a pile of files in S3.'},
+      {t:'End data lock-in',d:'A defensive slogan. If your data is in open Iceberg tables, any engine can read it — so Oracle has to promise support or lose the deal.'}
+    ],
+    5:[
+      {t:'Autonomous Database (ADB)',d:'Oracle\'s managed DB service: self-patching, self-tuning, auto-scaling. The automation of DBA chores is genuinely good; the word “autonomous” is doing marketing work.'},
+      {t:'AI Multicloud',d:'Oracle DB running inside AWS / Azure / GCP data centres (Oracle Database@Azure, etc.). A distribution strategy.'},
+      {t:'Managing how you want',d:'Deployment options: cloud, on-prem, hybrid. A feature list, dressed as a philosophy.'}
+    ],
+    6:[
+      {t:'Security in the age of AI',d:'The genuinely-new part: prompt injection, and RAG breaking row-level security. The rest is standard access control with a fresh coat of paint.'},
+      {t:'End data risk',d:'Backup + DR marketing. The substance underneath is RPO/RTO and continuous redo shipping.'},
+      {t:'ZDLRA',d:'Zero Data Loss Recovery Appliance: purpose-built hardware that continuously ships redo logs so RPO ≈ 0. Genuinely non-generic Oracle hardware.',g:true}
+    ]
+  };
+  Object.keys(cardData).forEach(function(mod){
+    var host=document.getElementById('cards'+mod); if(!host)return;
+    cardData[mod].forEach(function(c){
+      var d=document.createElement('div');
+      d.className='flip'+(c.g?' genuine':'');
+      d.innerHTML=
+        '<div class="flip-in">'+
+          '<div class="face front">'+(c.g?'<span class="genuine-tag">Oracle-built</span>':'')+
+            '<div class="badge-term">'+c.t+'</div>'+
+            '<div class="flip-hint">tap to decode ↓</div>'+
+          '</div>'+
+          '<div class="face back">'+
+            '<div class="truth-label">'+(c.g?'genuinely theirs':'what it actually is')+'</div>'+
+            '<div class="truth">'+c.d+'</div>'+
+          '</div>'+
+        '</div>';
+      d.addEventListener('click',function(){d.classList.toggle('open');});
+      host.appendChild(d);
+    });
+  });
+
+  /* ---------- module 0 sorter ---------- */
+  var allTerms=[
+    {t:'Converged DB',y:false},{t:'JSON Duality',y:true},{t:'Mission-critical',y:false},
+    {t:'Vector DB',y:false},{t:'RAG',y:false},{t:'Select AI',y:true},
+    {t:'Deep research AI',y:false},{t:'Privacy agent',y:false},{t:'AI Lakehouse',y:false},
+    {t:'Iceberg',y:false},{t:'Autonomous DB',y:false},{t:'AI Multicloud',y:false},
+    {t:'ZDLRA',y:true}
+  ];
+  var sorter=document.getElementById('sorter'), sCount=document.getElementById('sorterCount'),
+      sMsg=document.getElementById('sorterMsg'), revealed=false;
+  function renderSorter(){
+    sorter.innerHTML=''; revealed=false; sMsg.textContent='';
+    allTerms.forEach(function(o){o.pick=false;
+      var el=document.createElement('button'); el.className='term'; el.textContent=o.t; o.el=el;
+      el.addEventListener('click',function(){
+        if(revealed)return;
+        var picked=allTerms.filter(function(x){return x.pick;}).length;
+        if(!o.pick&&picked>=3)return;
+        o.pick=!o.pick; el.classList.toggle('pick',o.pick); updCount();
+      });
+      sorter.appendChild(el);
+    });
+    updCount();
+  }
+  function updCount(){
+    var n=allTerms.filter(function(x){return x.pick;}).length;
+    sCount.textContent=n+' / 3 picked';
+  }
+  document.getElementById('sorterReveal').addEventListener('click',function(){
+    revealed=true; var right=0;
+    allTerms.forEach(function(o){
+      o.el.classList.remove('pick');
+      if(o.y){o.el.classList.add('reveal-yes'); if(o.pick)right++;}
+      else{o.el.classList.add('reveal-no'); if(o.pick)o.el.classList.add('wrong');}
+    });
+    var msgs=['Zero right — but now you\'ll never forget them.','One of three. The other two are the ones everyone assumes are generic.','Two of three — close. The missed one is the surprise.','All three. You can already see through the deck.'];
+    sMsg.innerHTML='<b style="color:var(--amber)">'+right+' / 3 correct.</b> '+msgs[right]+' The real Oracle engineering: <b style="color:var(--amber)">JSON Duality, Select AI, ZDLRA</b>.';
+  });
+  document.getElementById('sorterReset').addEventListener('click',renderSorter);
+  renderSorter();
+
+  /* ---------- module 1 JSON duality ---------- */
+  var dualView=document.getElementById('dualView');
+  var relHTML=
+    '<pre class="code"><span class="cm">-- users</span>\n'+
+    '<span class="nm">id</span>  name        team_id\n'+
+    ' 7   Reda        <span class="st">3</span>\n\n'+
+    '<span class="cm">-- teams</span>\n'+
+    '<span class="nm">id</span>  name\n'+
+    ' 3   Platform\n\n'+
+    '<span class="cm">-- memberships</span>\n'+
+    '<span class="nm">user_id</span> role\n'+
+    ' 7      lead\n'+
+    ' 7      reviewer</pre>';
+  var jsonHTML=
+    '<pre class="code">{\n'+
+    '  <span class="st">"id"</span>: <span class="nm">7</span>,\n'+
+    '  <span class="st">"name"</span>: <span class="st">"Reda"</span>,\n'+
+    '  <span class="st">"team"</span>: { <span class="st">"id"</span>: <span class="nm">3</span>, <span class="st">"name"</span>: <span class="st">"Platform"</span> },\n'+
+    '  <span class="st">"roles"</span>: [<span class="st">"lead"</span>, <span class="st">"reviewer"</span>]\n'+
+    '}\n'+
+    '<span class="cm">// edit this doc → the 3 tables update</span></pre>';
+  function setDual(v){dualView.innerHTML=(v==='rel'?relHTML:jsonHTML);}
+  setDual('rel');
+  document.getElementById('dualToggle').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    Array.prototype.forEach.call(this.children,function(c){c.classList.remove('on');});
+    b.classList.add('on'); setDual(b.dataset.v);
+  });
+
+  /* ---------- module 2 cosine canvas ---------- */
+  var cv=document.getElementById('cosCanvas'), ctx=cv.getContext('2d');
+  var A={x:1,y:0}, B={x:0,y:1}, drag=null, DPR=Math.max(1,window.devicePixelRatio||1);
+  function css(v){return getComputedStyle(root).getPropertyValue(v).trim();}
+  function sizeCanvas(){cv.width=440*DPR; cv.height=440*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);}
+  sizeCanvas();
+  function toScreen(p){return {x:220+p.x*150, y:220-p.y*150};}
+  function toWorld(sx,sy){var r=cv.getBoundingClientRect(); var x=(sx-r.left)/r.width*440; var y=(sy-r.top)/r.height*440; return {x:(x-220)/150, y:-(y-220)/150};}
+  function arrow(p,color,label){
+    var s=toScreen(p), o={x:220,y:220};
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(s.x,s.y); ctx.stroke();
+    var a=Math.atan2(s.y-o.y,s.x-o.x);
+    ctx.beginPath(); ctx.moveTo(s.x,s.y);
+    ctx.lineTo(s.x-12*Math.cos(a-0.4),s.y-12*Math.sin(a-0.4));
+    ctx.lineTo(s.x-12*Math.cos(a+0.4),s.y-12*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.arc(s.x,s.y,7,0,7); ctx.fillStyle=color; ctx.fill();
+    ctx.font='600 13px ui-monospace,monospace'; ctx.fillStyle=color;
+    ctx.fillText(label,s.x+10,s.y-8);
+  }
+  function drawCos(){
+    var line=css('--line'), sig=css('--signal'), brand=css('--brand'), faint=css('--ink-faint');
+    ctx.clearRect(0,0,440,440);
+    // grid
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    for(var i=-1;i<=1;i++){
+      ctx.globalAlpha=(i===0?.9:.35);
+      ctx.beginPath(); ctx.moveTo(220+i*150,10); ctx.lineTo(220+i*150,430); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(10,220+i*150); ctx.lineTo(430,220+i*150); ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    // angle wedge
+    var aA=Math.atan2(A.y,A.x), aB=Math.atan2(B.y,B.x);
+    ctx.beginPath(); ctx.moveTo(220,220);
+    ctx.arc(220,220,46,-aA,-aB,aB>aA); ctx.closePath();
+    ctx.fillStyle=sig; ctx.globalAlpha=.14; ctx.fill(); ctx.globalAlpha=1;
+    arrow(A,brand,'A'); arrow(B,sig,'B');
+    // readout
+    var dot=A.x*B.x+A.y*B.y, ma=Math.hypot(A.x,A.y), mb=Math.hypot(B.x,B.y);
+    var cos=(ma*mb)?dot/(ma*mb):0; cos=Math.max(-1,Math.min(1,cos));
+    var deg=Math.acos(cos)*180/Math.PI;
+    document.getElementById('vA').textContent='('+A.x.toFixed(2)+', '+A.y.toFixed(2)+')';
+    document.getElementById('vB').textContent='('+B.x.toFixed(2)+', '+B.y.toFixed(2)+')';
+    document.getElementById('ang').textContent=deg.toFixed(0)+'°';
+    document.getElementById('cos').textContent=cos.toFixed(2);
+    var vd; if(cos>0.85)vd='Nearly identical direction — same meaning.';
+    else if(cos>0.3)vd='Pointing similar ways — related meaning.';
+    else if(cos>-0.3)vd='Roughly perpendicular — unrelated.';
+    else if(cos>-0.85)vd='Opposed — meanings pull apart.';
+    else vd='Opposite direction — antonyms.';
+    document.getElementById('cosVerdict').textContent=vd;
+  }
+  function pick(e){
+    var t=e.touches?e.touches[0]:e, w=toWorld(t.clientX,t.clientY);
+    var dA=Math.hypot(w.x-A.x,w.y-A.y), dB=Math.hypot(w.x-B.x,w.y-B.y);
+    drag=(dA<dB?A:B); move(e); e.preventDefault();
+  }
+  function move(e){
+    if(!drag)return; var t=e.touches?e.touches[0]:e, w=toWorld(t.clientX,t.clientY);
+    drag.x=Math.max(-1.4,Math.min(1.4,w.x)); drag.y=Math.max(-1.4,Math.min(1.4,w.y));
+    drawCos(); if(e.cancelable)e.preventDefault();
+  }
+  function up(){drag=null;}
+  cv.addEventListener('mousedown',pick); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+  cv.addEventListener('touchstart',pick,{passive:false}); cv.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',up);
+  drawCos();
+
+  /* ---------- module 2 toy semantic search ---------- */
+  var corpus=[
+    {txt:'I brewed a fresh espresso this morning.',v:{drink:.9,morning:.8,money:0,weather:.05,travel:.1}},
+    {txt:'The forecast says heavy rain all weekend.',v:{drink:0,morning:.1,money:0,weather:.95,travel:.2}},
+    {txt:'She wired the payment before the deadline.',v:{drink:0,morning:.1,money:.95,weather:0,travel:.1}},
+    {txt:'A warm cup of tea before sunrise.',v:{drink:.85,morning:.75,money:0,weather:.15,travel:0}},
+    {txt:'Our flight to Lisbon was delayed again.',v:{drink:0,morning:.2,money:.2,weather:.25,travel:.95}},
+    {txt:'Interest rates rose and the budget slipped.',v:{drink:0,morning:0,money:.9,weather:0,travel:.05}}
+  ];
+  var qmap=[
+    {k:['coffee','espresso','tea','drink','hot','cup','brew'],dim:'drink'},
+    {k:['morning','sunrise','early','dawn','breakfast'],dim:'morning'},
+    {k:['money','payment','budget','pay','cash','rates','cost'],dim:'money'},
+    {k:['weather','rain','forecast','storm','sun','cold'],dim:'weather'},
+    {k:['travel','flight','trip','airport','lisbon','fly'],dim:'travel'}
+  ];
+  function embedQuery(q){
+    q=q.toLowerCase(); var v={drink:0,morning:0,money:0,weather:0,travel:0}, hit=false;
+    qmap.forEach(function(m){m.k.forEach(function(w){if(q.indexOf(w)>=0){v[m.dim]+=1; hit=true;}});});
+    if(!hit){v={drink:.4,morning:.4,money:.3,weather:.3,travel:.3};}
+    return v;
+  }
+  function cosObj(a,b){
+    var d=0,ma=0,mb=0; for(var k in a){d+=a[k]*(b[k]||0); ma+=a[k]*a[k];} for(var j in b){mb+=b[j]*b[j];}
+    return (ma&&mb)?d/(Math.sqrt(ma)*Math.sqrt(mb)):0;
+  }
+  var simInput=document.getElementById('simInput'), simResults=document.getElementById('simResults');
+  function runSim(){
+    var qv=embedQuery(simInput.value);
+    var scored=corpus.map(function(c){return {txt:c.txt,s:cosObj(qv,c.v)};}).sort(function(a,b){return b.s-a.s;});
+    simResults.innerHTML=scored.map(function(r,i){
+      var pct=Math.round(Math.max(0,r.s)*100);
+      var op=i===0?'1':(i<3?'.9':'.5');
+      return '<div class="simrow" style="opacity:'+op+'"><span class="txt">'+r.txt+'</span>'+
+        '<span class="track"><i style="width:'+pct+'%"></i></span><span class="val">'+r.s.toFixed(2)+'</span></div>';
+    }).join('');
+  }
+  simInput.addEventListener('input',runSim); runSim();
+
+  /* ---------- module 3 NL2SQL guesser ---------- */
+  var nlqQuestions=[
+    {q:'how many active users?',
+      interps:[
+        {name:'logged in last 30 days',pct:'~40%',sql:"SELECT COUNT(*) FROM users\nWHERE last_login > NOW() - INTERVAL '30 days'",def:'“Active” = recent session. Most common guess.'},
+        {name:'account status = active',pct:'~35%',sql:"SELECT COUNT(*) FROM users\nWHERE status = 'active'",def:'“Active” = a flag someone set. Totally different number.'},
+        {name:'has a paid subscription',pct:'~25%',sql:"SELECT COUNT(DISTINCT u.id) FROM users u\nJOIN subscriptions s ON s.user_id = u.id\nWHERE s.state = 'paid'",def:'“Active” = paying. The finance team\'s definition.'}
+      ]},
+    {q:'top customers last month',
+      interps:[
+        {name:'by revenue',pct:'~55%',sql:"SELECT c.name, SUM(o.total) t FROM customers c\nJOIN orders o ON o.customer_id=c.id\nWHERE o.created_at >= date_trunc('month', now()) - INTERVAL '1 month'\nGROUP BY c.name ORDER BY t DESC LIMIT 10",def:'“Top” = money. Probably right… probably.'},
+        {name:'by order count',pct:'~30%',sql:"SELECT c.name, COUNT(*) n FROM customers c\nJOIN orders o ON o.customer_id=c.id\nGROUP BY c.name ORDER BY n DESC LIMIT 10",def:'“Top” = frequency. A regular buying cheap items ranks high.'},
+        {name:'“last month” = 30 days vs calendar',pct:'~15%',sql:"-- is 'last month' the previous\n-- CALENDAR month, or the last 30 days?\n-- The model silently chose one.",def:'Even the date window is ambiguous. Nobody flags it.'}
+      ]},
+    {q:'revenue this quarter',
+      interps:[
+        {name:'gross bookings',pct:'~45%',sql:"SELECT SUM(total) FROM orders\nWHERE created_at >= date_trunc('quarter', now())",def:'Counts everything ordered, refunds included.'},
+        {name:'net of refunds',pct:'~35%',sql:"SELECT SUM(total) - COALESCE(SUM(refund),0)\nFROM orders WHERE created_at >= date_trunc('quarter', now())",def:'Finance means net. The demo showed gross.'},
+        {name:'recognised revenue',pct:'~20%',sql:"-- accrual accounting: revenue is\n-- recognised over the contract term,\n-- not at time of sale. Needs a schema\n-- the model has never seen.",def:'The accounting-correct answer. The model can\'t know this.'}
+      ]}
+  ];
+  var nlqBtns=document.getElementById('nlqButtons'), nlqOut=document.getElementById('nlqOut');
+  nlqQuestions.forEach(function(item,i){
+    var b=document.createElement('button'); b.className='btn'+(i===0?' brandbtn':''); b.textContent='“'+item.q+'”';
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(nlqBtns.children,function(c){c.classList.remove('brandbtn');});
+      b.classList.add('brandbtn'); showNlq(item);
+    });
+    nlqBtns.appendChild(b);
+  });
+  function showNlq(item){
+    nlqOut.innerHTML='<p class="muted" style="margin:2px 0 10px">One question → '+item.interps.length+' confident, contradictory answers. The model returns exactly one and never tells you it chose:</p>'+
+      item.interps.map(function(it){
+        return '<div class="interp"><div class="h"><span>'+it.name+'</span><span class="pct">picked '+it.pct+'</span></div>'+
+          '<pre class="code">'+it.sql.replace(/</g,'&lt;')+'</pre>'+
+          '<div class="def">'+it.def+'</div></div>';
+      }).join('');
+  }
+  showNlq(nlqQuestions[0]);
+
+  /* ---------- module 4 row vs columnar ---------- */
+  var cols=['id','name','dept','salary'];
+  var rows=[['1','Reda','Eng','185'],['2','Sam','Eng','160'],['3','Lee','Ops','140'],['4','Jo','Sales','150']];
+  var rcGrid=document.getElementById('rowcolGrid'), scanNote=document.getElementById('scanNote'), storeMode='row';
+  function renderGrid(){
+    rcGrid.innerHTML='';
+    var head=document.createElement('div'); head.className='rc-row';
+    cols.forEach(function(c){var d=document.createElement('div'); d.className='cell head'+(c==='salary'?' q':''); d.textContent=c; head.appendChild(d);});
+    rcGrid.appendChild(head);
+    rows.forEach(function(r){
+      var rr=document.createElement('div'); rr.className='rc-row';
+      r.forEach(function(val,ci){
+        var d=document.createElement('div'); d.className='cell';
+        if(cols[ci]==='salary'){d.classList.add('hot');}
+        else if(storeMode==='row'){d.classList.add('hot');} // row store reads whole rows
+        else{d.classList.add('cold');}
+        d.textContent=val; rr.appendChild(d);
+      });
+      rcGrid.appendChild(rr);
+    });
+    var touched= storeMode==='row' ? rows.length*cols.length : rows.length;
+    var total=rows.length*cols.length;
+    scanNote.innerHTML= storeMode==='row'
+      ? 'Row store: rows are contiguous on disk, so reaching <b style="color:var(--signal)">salary</b> drags every other field along. Cells read: <b style="color:var(--brand)">'+touched+' / '+total+'</b>.'
+      : 'Columnar: the salary column sits together on disk. Read just it, skip the rest. Cells read: <b style="color:var(--signal)">'+touched+' / '+total+'</b> — '+Math.round(touched/total*100)+'% of the I/O.';
+  }
+  document.getElementById('storeToggle').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    Array.prototype.forEach.call(this.children,function(c){c.classList.remove('on');});
+    b.classList.add('on'); storeMode=b.dataset.v; renderGrid();
+  });
+  renderGrid();
+
+  /* ---------- module 5 managed tradeoff ---------- */
+  var toItems=[
+    {lab:'Ops burden',good:true,inv:true},   // managed -> lower burden (good)
+    {lab:'Control / tunability',good:false,inv:true},
+    {lab:'Cost per unit',good:false,inv:false},
+    {lab:'Vendor lock-in',good:false,inv:false}
+  ];
+  var toHost=document.getElementById('tradeoff'), managed=document.getElementById('managedSlider');
+  toItems.forEach(function(it){
+    it.el=document.createElement('div'); it.el.className='to-item '+(it.good?'good':'bad');
+    it.el.innerHTML='<div class="lab">'+it.lab+'</div><div class="meter"><i></i><span></span></div>';
+    toHost.appendChild(it.el);
+  });
+  function renderTradeoff(){
+    var m=+managed.value/100; // 0 self-host … 1 managed
+    toItems.forEach(function(it){
+      var v = it.inv ? (1-m) : m; // ops burden & control fall as managed rises; cost & lock-in rise
+      // ops burden good means low is good; render magnitude
+      var pct=Math.round(v*100);
+      it.el.querySelector('i').style.width=Math.max(6,pct)+'%';
+      var word;
+      if(it.lab==='Ops burden')word=m>.7?'you barely touch it':m<.3?'you run everything':'shared';
+      else if(it.lab==='Control / tunability')word=m>.7?'limited knobs':m<.3?'full control':'partial';
+      else if(it.lab==='Cost per unit')word=m>.7?'premium':m<.3?'cheapest':'moderate';
+      else word=m>.7?'high — hard to leave':m<.3?'portable':'growing';
+      it.el.querySelector('span').textContent=word;
+    });
+  }
+  managed.addEventListener('input',renderTradeoff); renderTradeoff();
+
+  /* ---------- module 6 RPO/RTO ---------- */
+  var rpo=document.getElementById('rpoSlider'), rto=document.getElementById('rtoSlider');
+  var rpoOut=document.getElementById('rpoOut'), rtoOut=document.getElementById('rtoOut');
+  var tlRpo=document.getElementById('tlRpo'), tlRto=document.getElementById('tlRto'),
+      tlCrash=document.getElementById('tlCrash'), drNote=document.getElementById('drNote');
+  function fmt(mins){ if(mins<1)return '≈ 0 (near-zero)'; if(mins<60)return mins+' min'; return (mins/60).toFixed(1)+' hr'; }
+  function renderDR(){
+    var rpoMin=Math.round(+rpo.value/100*240); // 0..4h
+    var rtoMin=Math.round(+rto.value/100*240);
+    rpoOut.textContent=fmt(rpoMin); rtoOut.textContent=fmt(rtoMin);
+    var crashPct=50;
+    tlCrash.style.left=crashPct+'%';
+    var rpoW=+rpo.value/100*44; // width %
+    var rtoW=+rto.value/100*44;
+    tlRpo.style.right=(100-crashPct)+'%'; tlRpo.style.left=(crashPct-rpoW)+'%';
+    tlRto.style.left=crashPct+'%'; tlRto.style.width=rtoW+'%';
+    var cost = (rpoMin<10?'$$$':rpoMin<60?'$$':'$');
+    drNote.innerHTML='Last good copy was <b style="color:var(--brand)">'+fmt(rpoMin)+'</b> before the crash — that\'s the data you lose. You\'re back up <b style="color:var(--signal)">'+fmt(rtoMin)+'</b> after. Pushing RPO toward zero gets expensive fast (infra cost: <b>'+cost+'</b>) — continuous redo shipping / ZDLRA is what buys the last few minutes.';
+  }
+  rpo.addEventListener('input',renderDR); rto.addEventListener('input',renderDR); renderDR();
+
+  window.addEventListener('resize',function(){DPR=Math.max(1,window.devicePixelRatio||1);drawCos();});
+})();
+</script>
